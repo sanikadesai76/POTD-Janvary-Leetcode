@@ -22,15 +22,22 @@ public:
         int length = s.length();
         int maxScore = 0;
 
-        for (int i = 1; i < length; i++) { // i is the split point
-            // Count `0`s in the left part
-            int leftZeros = count(s.begin(), s.begin() + i, '0');
-            // Count `1`s in the right part
-            int rightOnes = count(s.begin() + i, s.end(), '1');
-            // Calculate the score
+        int leftZeros = 0;    // Count of `0`s in the left part
+        int rightOnes = 0;    // Count of `1`s in the right part
+
+        // First, calculate total number of `1`s in the right part
+        for (char c : s) {
+            if (c == '1') rightOnes++;
+        }
+
+        // Now, iterate through the string to calculate the score at each split
+        for (int i = 0; i < length - 1; i++) { // Split at i, avoid last split
+            if (s[i] == '0') leftZeros++;   // Add to left `0`s
+            if (s[i] == '1') rightOnes--;   // Subtract from right `1`s
+
+            // Calculate score at this split point
             int currentScore = leftZeros + rightOnes;
-            // Update the maximum score
-            maxScore = max(maxScore, currentScore);
+            maxScore = max(maxScore, currentScore);  // Update max score
         }
 
         return maxScore;
