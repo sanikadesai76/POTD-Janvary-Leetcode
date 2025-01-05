@@ -1,0 +1,62 @@
+/*You are given a string s of lowercase English letters and a 2D integer array shifts where shifts[i] = [starti, endi, directioni]. For every i, shift the characters in s from the index starti to the index endi (inclusive) forward if directioni = 1, or shift the characters backward if directioni = 0.
+
+Shifting a character forward means replacing it with the next letter in the alphabet (wrapping around so that 'z' becomes 'a'). Similarly, shifting a character backward means replacing it with the previous letter in the alphabet (wrapping around so that 'a' becomes 'z').
+
+Return the final string after all such shifts to s are applied.
+
+ 
+
+Example 1:
+
+Input: s = "abc", shifts = [[0,1,0],[1,2,1],[0,2,1]]
+Output: "ace"
+Explanation: Firstly, shift the characters from index 0 to index 1 backward. Now s = "zac".
+Secondly, shift the characters from index 1 to index 2 forward. Now s = "zbd".
+Finally, shift the characters from index 0 to index 2 forward. Now s = "ace".
+*/
+
+//solution
+class Solution {
+public:
+    string shiftingLetters(string s, vector<vector<int>>& shifts) {
+        int n = s.length();
+        vector<int> arr(n, 0);
+
+        // Update the `arr` based on `shifts`
+        for (auto it : shifts) {
+            int first = it[0];
+            int end = it[1];
+            int shift = it[2];
+
+            if (shift == 1) {
+                arr[first] += 1;
+                if (end + 1 < n) {
+                    arr[end + 1] -= 1;
+                }
+            } else {
+                arr[first] -= 1;
+                if (end + 1 < n) {
+                    arr[end + 1] += 1;
+                }
+            }
+        }
+
+        // Prefix sum to calculate net shifts
+        for (int i = 1; i < n; i++) {
+            arr[i] += arr[i - 1];
+        }
+
+        // Apply shifts to the string
+        for (int i = 0; i < n; i++) {
+            int ele = arr[i] % 26; // Handle modulo 26
+            if (ele < 0) {
+                ele += 26; // Convert negative shift to positive
+            }
+            s[i] = (((s[i] - 'a') + ele) % 26) + 'a';
+        }
+
+        return s;
+    }
+};
+//TC = O(M+N);
+//SC = O(1)
