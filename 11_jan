@@ -1,0 +1,51 @@
+/*
+Given a string s and an integer k, return true if you can use all the characters in s to construct k 
+palindrome strings
+ or false otherwise.
+
+ 
+
+Example 1:
+
+Input: s = "annabelle", k = 2
+Output: true
+Explanation: You can construct two palindromes using all characters in s.
+Some possible constructions "anna" + "elble", "anbna" + "elle", "anellena" + "b"
+Example 2:
+
+Input: s = "leetcode", k = 3
+Output: false
+Explanation: It is impossible to construct 3 palindromes using all the characters of s.
+
+*/
+
+//approch
+class Solution {
+public:
+    bool canConstruct(string s, int k) {
+        int n = s.length();
+
+        // If the number of palindromes is greater than the length of the string, it's impossible.
+        if (k > n) return false;
+
+        // If the number of palindromes is exactly equal to the string length, it's always possible.
+        if (k == n) return true;
+
+        // Calculate the frequency of each character
+        vector<int> freq(26, 0);
+        for (char c : s) {
+            freq[c - 'a']++;
+        }
+
+        // Count characters with odd frequencies
+        int oddcount = 0;
+        for (int count : freq) {
+            if (count % 2 != 0) {
+                oddcount++;
+            }
+        }
+
+        // To construct k palindromes, at least `oddcount` palindromes are required.
+        return oddcount <= k;
+    }
+};
