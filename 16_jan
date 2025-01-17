@@ -14,7 +14,7 @@ A possible nums3 array is [8,0,7,2,11,3,4,1,9,1,6,3].
 The bitwise XOR of all these numbers is 13, so we return 13.
 */
 
-//approch
+//approch 1
 class Solution {
 public:
     int xorAllNums(vector<int>& nums1, vector<int>& nums2) {
