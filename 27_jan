@@ -1,0 +1,74 @@
+/*
+There are a total of numCourses courses you have to take, labeled from 0 to numCourses - 1. You are given an array prerequisites where prerequisites[i] = [ai, bi] indicates that you must take course ai first if you want to take course bi.
+
+For example, the pair [0, 1] indicates that you have to take course 0 before you can take course 1.
+Prerequisites can also be indirect. If course a is a prerequisite of course b, and course b is a prerequisite of course c, then course a is a prerequisite of course c.
+
+You are also given an array queries where queries[j] = [uj, vj]. For the jth query, you should answer whether course uj is a prerequisite of course vj or not.
+
+Return a boolean array answer, where answer[j] is the answer to the jth query.
+
+ 
+
+Example 1:
+
+
+Input: numCourses = 2, prerequisites = [[1,0]], queries = [[0,1],[1,0]]
+Output: [false,true]
+Explanation: The pair [1, 0] indicates that you have to take course 1 before you can take course 0.
+Course 0 is not a prerequisite of course 1, but the opposite is true.
+*/
+
+//approch
+class Solution {
+public:
+    vector<bool> checkIfPrerequisite(int numCourses, vector<vector<int>>& prerequisites, vector<vector<int>>& queries) {
+        // Create adjacency list and indegree array
+        vector<vector<int>> adj(numCourses);
+        vector<int> indegree(numCourses, 0);
+
+        for (const auto& edge : prerequisites) {
+            int u = edge[0];
+            int v = edge[1];
+            adj[u].push_back(v);
+            indegree[v]++;
+        }
+
+        // Initialize queue with nodes having indegree 0
+        queue<int> q;
+        for (int i = 0; i < numCourses; i++) {
+            if (indegree[i] == 0) {
+                q.push(i);
+            }
+        }
+
+        // Map from node to set of prerequisite nodes
+        vector<unordered_set<int>> prereqMap(numCourses);
+
+        while (!q.empty()) {
+            int node = q.front();
+            q.pop();
+
+            for (int neighbor : adj[node]) {
+                // Add current node and its prerequisites to the neighbor's prerequisites
+                prereqMap[neighbor].insert(node);
+                prereqMap[neighbor].insert(prereqMap[node].begin(), prereqMap[node].end());
+
+                indegree[neighbor]--;
+                if (indegree[neighbor] == 0) {
+                    q.push(neighbor);
+                }
+            }
+        }
+
+        // Process each query
+        vector<bool> result;
+        for (const auto& query : queries) {
+            int src = query[0];
+            int dest = query[1];
+            result.push_back(prereqMap[dest].count(src) > 0);
+        }
+
+        return result;
+    }
+};
